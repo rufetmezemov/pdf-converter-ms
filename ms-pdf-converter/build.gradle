@@ -1,0 +1,94 @@
+plugins {
+    id 'java'
+    id 'jacoco'
+    id 'org.springframework.boot' version '2.7.2'
+    id 'io.spring.dependency-management' version '1.0.12.RELEASE'
+}
+
+group = 'az.pashabank'
+version = '1.0.0'
+
+targetCompatibility = JavaVersion.VERSION_17
+sourceCompatibility = JavaVersion.VERSION_17
+
+configurations {
+    compileOnly {
+        extendsFrom annotationProcessor
+    }
+}
+
+repositories {
+    mavenLocal()
+    mavenCentral()
+}
+
+ext {
+    springCloudVersion = '2021.0.1'
+}
+
+dependencyManagement {
+    imports {
+        mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
+    }
+}
+
+archivesBaseName = "${project.name}"
+
+def coverageExclusionList = [
+        "**/logger/*",
+        "**/exception/*",
+        "**/errorhandler/*",
+        "**/Application.java"
+]
+
+jar {
+    enabled = true
+    archiveFileName = "${project.name}-light.jar"
+}
+
+bootJar {
+    enabled = true
+    archiveFileName = "${project.name}.jar"
+}
+
+
+tasks.named('jacocoTestReport') {
+    reports {
+        xml.enabled true
+        html.enabled false
+    }
+}
+
+tasks.named('test') {
+    useJUnitPlatform()
+}
+
+
+dependencies {
+    implementation 'org.springframework.boot:spring-boot-starter'
+
+    //Lombok
+    compileOnly 'org.projectlombok:lombok'
+    annotationProcessor 'org.projectlombok:lombok'
+
+    // Spring WEB
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+
+    //Playwright for HTML to PDF
+    implementation 'com.microsoft.playwright:playwright:1.24.1'
+
+    //Thymeleaf
+    implementation 'org.springframework.boot:spring-boot-starter-thymeleaf:2.7.2'
+
+    // logging
+    implementation 'net.logstash.logback:logstash-logback-encoder:7.2'
+
+    //Actuator
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
+
+    // Apache commons
+    implementation 'commons-io:commons-io:2.11.0'
+
+    //Test
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+}
